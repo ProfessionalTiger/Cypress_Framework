@@ -9,7 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "runheadless": "cypress run --browser chrome --headless",
-    "open": "cypress open"
+    "open": "cypress open",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "cypress": "^15.13.1",
@@ -19,6 +21,7 @@
   "devDependencies": {
     "cypress-file-upload": "^5.0.8",
     "cypress-iframe": "^1.0.1",
-    "cypress-xpath": "^2.0.1"
+    "cypress-xpath": "^2.0.1",
+    "eslint": "^8.57.0"
   }
 }
