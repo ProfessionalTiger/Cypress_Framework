@@ -21,3 +21,13 @@ import "cypress-real-events/support";
 
 import 'cypress-file-upload';
 require('cypress-iframe');
+
+// Handle uncaught exceptions - ignore ResizeObserver errors from YouTube
+Cypress.on('uncaught:exception', (err, _runnable) => {
+    // Ignore ResizeObserver loop errors (common in modern web apps)
+    if (err.message.includes('ResizeObserver loop completed')) {
+        return false; // Don't fail the test
+    }
+    // Let other errors fail the test normally
+    return true;
+});
