@@ -15,8 +15,7 @@ describe("Youtube Testing Suite", () => {
 
     })
 
-    it
-        ("TC_002 Count the number of thumbnails loaded ", () => {
+    it("TC_002 Count the number of thumbnails loaded ", () => {
 
             cy.get(".style-scope ytd-rich-item-renderer").should('have.length', 47)
 
