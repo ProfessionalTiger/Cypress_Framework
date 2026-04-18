@@ -11,6 +11,8 @@ A robust end-to-end testing automation framework for YouTube using Cypress. This
 - [Project Structure](#project-structure)
 - [Configuration](#configuration)
 - [Running Tests](#running-tests)
+- [Code Quality](#code-quality)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [Test Cases](#test-cases)
 - [Dependencies](#dependencies)
 - [Best Practices](#best-practices)
@@ -19,11 +21,12 @@ A robust end-to-end testing automation framework for YouTube using Cypress. This
 
 ## 🎯 Overview
 
-This automation suite provides comprehensive end-to-end testing for YouTube's core functionality using Cypress 15.13.1. The framework is built to validate user interactions, search functionality, content loading, and video playback features with reliable and maintainable test cases.
+This automation suite provides comprehensive end-to-end testing for YouTube's core functionality using Cypress 15.13.1. The framework is built to validate user interactions, search functionality, content loading, and video playback features with reliable and maintainable test cases. The project includes integrated ESLint code quality checks and a fully automated CI/CD pipeline powered by GitHub Actions.
 
 **Version:** 1.0.0  
 **Author:** Aamir Saleem  
-**Type:** CommonJS
+**Type:** CommonJS  
+**Node.js Version:** 20.x LTS
 
 ## ✨ Features
 
@@ -35,13 +38,15 @@ This automation suite provides comprehensive end-to-end testing for YouTube's co
 - ✅ **Advanced Selectors** - XPath support for complex element selection
 - ✅ **File Upload Capability** - Support for file upload testing
 - ✅ **iFrame Handling** - Embedded content testing capabilities
+- ✅ **Code Quality Linting** - Integrated ESLint 9.0.0 with Cypress support
+- ✅ **Automated CI/CD** - GitHub Actions pipeline for continuous testing and linting
 
 ## 📦 Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** (v14 or higher)
-- **npm** (v6 or higher) - comes with Node.js
+- **Node.js** (v20 LTS or higher)
+- **npm** (v10 or higher) - comes with Node.js
 - **Git** (for version control)
 
 ## 🚀 Installation
@@ -71,6 +76,9 @@ This will install:
 
 ```
 CypressWork/
+├── .github/
+│   └── workflows/
+│       └── main.yml                      # GitHub Actions CI/CD pipeline
 ├── cypress/
 │   ├── e2e/
 │   │   └── Youtube_TestCases.cy.js       # End-to-end test specifications
@@ -81,6 +89,7 @@ CypressWork/
 │       ├── commands.js                   # Custom Cypress commands
 │       └── e2e.js                        # E2E support configuration
 ├── cypress.config.js                     # Cypress configuration
+├── eslint.config.js                      # ESLint v9 configuration
 ├── package.json                          # Project dependencies
 ├── package-lock.json                     # Dependency lock file
 ├── .gitignore                            # Git ignore rules
@@ -88,6 +97,8 @@ CypressWork/
 ```
 
 ## ⚙️ Configuration
+
+### Cypress Configuration
 
 The Cypress configuration is defined in `cypress.config.js`:
 
@@ -97,7 +108,7 @@ const { defineConfig } = require("cypress");
 module.exports = defineConfig({
   allowCypressEnv: false,
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(_on, _config) {
       // implement node event listeners here
     },
   },
@@ -107,11 +118,28 @@ module.exports = defineConfig({
 ### Environment Variables
 Environment variables are currently disabled (`allowCypressEnv: false`). To enable environment-specific configurations, update the configuration file accordingly.
 
+### ESLint Configuration
+
+Code quality is enforced using ESLint v9 with flat config format. The configuration is defined in `eslint.config.js`:
+
+**Key Features:**
+- Cypress-specific rule set via `eslint-plugin-cypress`
+- Support for both CommonJS and ES6 module syntax
+- All Cypress globals recognized (`cy`, `describe`, `it`, etc.)
+- Node.js and browser globals properly configured
+- Custom rules: unused variables warned, console logs allowed
+
+**Run Linting:**
+```bash
+npm run lint        # Check for linting errors
+npm run lint:fix    # Auto-fix fixable issues
+```
+
 ## 🧪 Running Tests
 
 ### Run All Tests in Headless Mode
 ```bash
-npx cypress run
+npm run runheadless
 ```
 
 ### Open Cypress Test Runner (Interactive Mode)
@@ -136,6 +164,22 @@ npx cypress run --browser edge
 npx cypress run --headless --browser chrome
 ```
 
+## 🔍 Code Quality
+
+### Lint Your Code
+
+Check for code quality issues:
+```bash
+npm run lint
+```
+
+Automatically fix fixable issues:
+```bash
+npm run lint:fix
+```
+
+**Linting is automatically run** as part of the CI/CD pipeline on every push and pull request.
+
 ## � CI/CD Pipeline
 
 This project includes a **GitHub Actions CI pipeline** that automatically runs tests on every push and pull request.
@@ -145,30 +189,37 @@ This project includes a **GitHub Actions CI pipeline** that automatically runs t
 **File:** `.github/workflows/main.yml`
 
 The pipeline is configured to:
-- ✅ Trigger on pushes to `main` branch
+- ✅ Trigger on pushes to `main` and `feature/*` branches
 - ✅ Trigger on pull requests to `main` branch
-- ✅ Run on Windows (Windows Server 2022)
-- ✅ Install Node.js 16.x
-- ✅ Install project dependencies
-- ✅ Execute tests in headless mode
+- ✅ Run in parallel: **Linting job** (Ubuntu) + **Test job** (Windows)
+- ✅ Use Node.js 20.x LTS with JavaScript Actions Node.js 24 compatibility
+- ✅ Support modern ESLint v9 flat config format
 
-### Pipeline Workflow Steps
+### Pipeline Workflow Jobs
 
-1. **Checkout Code** - Fetches the repository
-2. **Setup Node.js** - Installs Node.js 16.x runtime
-3. **Install Dependencies** - Runs `npm install`
-4. **Run Tests** - Executes `npm run runheadless`
+#### 1. Linting Job (Ubuntu)
+- Runs on `ubuntu-latest`
+- Executes: `npm install`, `npm run lint`, `npm run lint:fix`
+- Validates code quality and formatting
+
+#### 2. Cypress Tests Job (Windows)
+- Runs on `windows-latest`
+- Executes: `npm install`, `npm run runheadless`
+- Tests all Cypress end-to-end test cases
+
+Both jobs run **in parallel** for faster feedback.
 
 ### Integration with Git
 
-Tests automatically run when you:
-- **Push to main branch:** `git push origin main`
+Tests and linting automatically run when you:
+- **Push to main or feature/* branches:** `git push origin main`
 - **Submit a pull request** to the `main` branch
 
 ### Monitoring Pipeline Status
 
 - Check GitHub Actions tab in your repository for:
   - Real-time test execution logs
+  - Linting results and code quality checks
   - Test results and pass/fail status
   - Performance metrics and duration
   - Failed test artifacts (screenshots, videos)
@@ -218,6 +269,8 @@ Tests automatically run when you:
 | cypress-file-upload | ^5.0.8 | File upload testing |
 | cypress-iframe | ^1.0.1 | iFrame content handling |
 | cypress-xpath | ^2.0.1 | XPath selector support |
+| eslint | ^9.0.0 | JavaScript linter (v9 with flat config) |
+| eslint-plugin-cypress | ^3.1.1 | Cypress-specific ESLint rules |
 
 ## 🛠️ Custom Commands
 
