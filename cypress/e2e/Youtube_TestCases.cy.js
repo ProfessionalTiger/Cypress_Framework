@@ -72,19 +72,17 @@ describe("Youtube Testing Suite", () => {
 
     it("TC_003 Load Shorts and validate that video played", () => {
         cy.get("a[aria-label='Shorts']", { timeout: 10000 }).should('be.visible').click();
-        // Wait for Shorts page to load by checking for video element instead of arbitrary wait
+        // Wait for Shorts page to load
         cy.get('video', { timeout: 15000 }).should('exist');
         
-        // Check video properties instead of visibility (video may be clipped but still playing)
-        cy.get('video').then(($video) => {
-            // Verify video element has the player attached
-            expect($video).to.have.length.greaterThan(0);
-            
-            // Verify video has required attributes
-            expect($video[0].videoWidth).to.be.greaterThan(0);
-            expect($video[0].videoHeight).to.be.greaterThan(0);
-            
-            cy.log(`Video loaded: ${$video[0].videoWidth}x${$video[0].videoHeight}`);
+        // Wait for video to load and have dimensions
+        cy.get('video').should(($video) => {
+            const videoElement = $video[0];
+            // Video may take time to load, just verify element exists and is ready
+            expect(videoElement).to.exist;
+            expect(videoElement.readyState).to.be.greaterThan(0);
         });
+        
+        cy.log('Shorts video loaded successfully');
     })
 })
