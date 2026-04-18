@@ -136,7 +136,51 @@ npx cypress run --browser edge
 npx cypress run --headless --browser chrome
 ```
 
-## 📝 Test Cases
+## � CI/CD Pipeline
+
+This project includes a **GitHub Actions CI pipeline** that automatically runs tests on every push and pull request.
+
+### Pipeline Configuration
+
+**File:** `.github/workflows/main.yml`
+
+The pipeline is configured to:
+- ✅ Trigger on pushes to `main` branch
+- ✅ Trigger on pull requests to `main` branch
+- ✅ Run on Windows (Windows Server 2022)
+- ✅ Install Node.js 16.x
+- ✅ Install project dependencies
+- ✅ Execute tests in headless mode
+
+### Pipeline Workflow Steps
+
+1. **Checkout Code** - Fetches the repository
+2. **Setup Node.js** - Installs Node.js 16.x runtime
+3. **Install Dependencies** - Runs `npm install`
+4. **Run Tests** - Executes `npm run runheadless`
+
+### Integration with Git
+
+Tests automatically run when you:
+- **Push to main branch:** `git push origin main`
+- **Submit a pull request** to the `main` branch
+
+### Monitoring Pipeline Status
+
+- Check GitHub Actions tab in your repository for:
+  - Real-time test execution logs
+  - Test results and pass/fail status
+  - Performance metrics and duration
+  - Failed test artifacts (screenshots, videos)
+
+### Viewing Results
+
+1. Go to your GitHub repository
+2. Navigate to **Actions** tab
+3. Select the workflow run to view detailed logs
+4. Review artifacts for debugging failed tests
+
+## �📝 Test Cases
 
 ### YouTube Testing Suite
 

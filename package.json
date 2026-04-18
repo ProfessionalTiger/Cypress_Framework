@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "runheadless": "cypress run --headless",
+    "runheadless": "cypress run --browser chrome --headless",
     "open": "cypress open"
   },
   "dependencies": {
