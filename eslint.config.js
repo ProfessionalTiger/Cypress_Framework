@@ -10,8 +10,21 @@ module.exports = [
     files: ['**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
-      sourceType: 'module',
+      sourceType: 'commonjs',
       globals: {
+        // Node.js globals
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        process: 'readonly',
+        // Browser globals
+        console: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        document: 'readonly',
+        window: 'readonly',
         // Cypress globals
         cy: 'readonly',
         Cypress: 'readonly',
@@ -29,7 +42,7 @@ module.exports = [
     },
     rules: {
       ...cypressPlugin.configs.recommended.rules,
-      'no-unused-vars': ['warn'],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-console': 'off'
     }
   }
