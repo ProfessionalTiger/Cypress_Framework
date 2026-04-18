@@ -4,35 +4,33 @@ describe("Youtube Testing Suite", () => {
         cy.viewport(1280, 720);
         cy.visit("https://www.youtube.com/");
         cy.title().should('eq', "YouTube");
-        cy.wait(2000); // Allow page to fully render
+        // Wait for search input to be interactive instead of arbitrary wait
+        cy.get("input[name='search_query']", { timeout: 10000 }).should('be.visible');
     })
 
     it("TC_001 Search cypress courses and play that", () => {
-        cy.get("input[name='search_query']", { timeout: 10000 }).should('be.visible');
+        cy.get("input[name='search_query']").should('be.visible');
         cy.get("input[name='search_query']").type("cypress");
-        cy.wait(1500); // Wait for suggestions to render
         
         // Click first suggestion using keyboard instead
         cy.get("input[name='search_query']").type('{enter}');
-        cy.wait(3000); // Wait for search results to load
+        // Wait for search results page to load by checking URL change or new elements
+        cy.get("[title*='Cypress']", { timeout: 15000 }).should('exist');
         
         // Search for the specific video
         cy.get("h3[title='Cypress - JavaScript End to End Testing(2022 Series)']>a", { timeout: 15000 })
             .should('be.visible')
             .click();
         
-        cy.wait(3000);
-        cy.title().should('include', "Cypress E2E Web Automation");
+        cy.title({ timeout: 10000 }).should('include', "Cypress E2E Web Automation");
     })
 
     it("TC_002 Count the number of thumbnails loaded", () => {
         // In headless mode, YouTube may not fully render all thumbnails initially
         // Focus on verifying that the page structure and feed container exist
         
-        cy.wait(2000);
-        
-        // Verify main feed container exists
-        cy.get('ytd-rich-grid-renderer, #contents, [role="main"]').should('exist');
+        // Wait for feed container to load instead of arbitrary wait
+        cy.get('ytd-rich-grid-renderer, #contents, [role="main"]', { timeout: 10000 }).should('exist');
         
         // Try to count items, but don't fail if none are found
         // (YouTube may lazy-load in headless mode)
@@ -58,10 +56,8 @@ describe("Youtube Testing Suite", () => {
 
     it("TC_003 Load Shorts and validate that video played", () => {
         cy.get("a[aria-label='Shorts']", { timeout: 10000 }).should('be.visible').click();
-        cy.wait(3000); // Wait for Shorts to load
-        
-        // Check for video element
-        cy.get('video', { timeout: 10000 }).should('exist');
+        // Wait for Shorts page to load by checking for video element instead of arbitrary wait
+        cy.get('video', { timeout: 15000 }).should('exist');
         cy.get('video').should('be.visible');
     })
 })
