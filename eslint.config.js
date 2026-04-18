@@ -6,11 +6,32 @@ module.exports = [
     ignores: ['node_modules/**', 'dist/**', '.git/**']
   },
   js.configs.recommended,
+  // Config for CommonJS files (cypress.config.js, etc.)
   {
-    files: ['**/*.js'],
+    files: ['cypress.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'commonjs',
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        process: 'readonly'
+      }
+    },
+    rules: {
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-console': 'off'
+    }
+  },
+  // Config for Cypress support and test files (ES6 modules)
+  {
+    files: ['cypress/**/*.js', 'eslint.config.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
         // Node.js globals
         require: 'readonly',
